@@ -8,16 +8,48 @@ let dbInstance = null;
 async function getDb() {
   if (dbInstance) return dbInstance;
 
-  const dbDir = process.env.DATA_DIR || path.join(__dirname, 'data');
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
-  }
-  const dbPath = process.env.DB_PATH || path.join(dbDir, 'prepnex.db');
+  let dbDir = process.env.DATA_DIR;
+  let dbPath;
 
-  dbInstance = await open({
-    filename: dbPath,
-    driver: sqlite3.Database
-  });
+  if (dbDir) {
+    try {
+      if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+      }
+      dbPath = process.env.DB_PATH || path.join(dbDir, 'prepnex.db');
+    } catch (err) {
+      console.warn(`⚠️ Warning: Could not access DATA_DIR (${dbDir}). Falling back to app local directory.`, err.message);
+      dbDir = path.join(__dirname, 'data');
+      if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+      }
+      dbPath = path.join(dbDir, 'prepnex.db');
+    }
+  } else {
+    dbDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dbDir)) {
+      fs.mkdirSync(dbDir, { recursive: true });
+    }
+    dbPath = process.env.DB_PATH || path.join(dbDir, 'prepnex.db');
+  }
+
+  try {
+    dbInstance = await open({
+      filename: dbPath,
+      driver: sqlite3.Database
+    });
+  } catch (err) {
+    console.error(`⚠️ Failed to open database at ${dbPath}, falling back to local fallback.`, err.message);
+    const fallbackDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(fallbackDir)) {
+      fs.mkdirSync(fallbackDir, { recursive: true });
+    }
+    const fallbackPath = path.join(fallbackDir, 'prepnex.db');
+    dbInstance = await open({
+      filename: fallbackPath,
+      driver: sqlite3.Database
+    });
+  }
 
   await dbInstance.exec('PRAGMA foreign_keys = ON;');
   await initSchema(dbInstance);
