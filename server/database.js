@@ -1,13 +1,19 @@
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
 const path = require('path');
+const fs = require('fs');
 
 let dbInstance = null;
 
 async function getDb() {
   if (dbInstance) return dbInstance;
 
-  const dbPath = path.join(__dirname, 'prepnex.db');
+  const dbDir = process.env.DATA_DIR || path.join(__dirname, 'data');
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
+  const dbPath = process.env.DB_PATH || path.join(dbDir, 'prepnex.db');
+
   dbInstance = await open({
     filename: dbPath,
     driver: sqlite3.Database
