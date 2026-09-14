@@ -8,7 +8,7 @@ let dbInstance = null;
 async function getDb() {
   if (dbInstance) return dbInstance;
 
-  let dbDir = process.env.DATA_DIR;
+  let dbDir = process.env.VERCEL ? '/tmp' : process.env.DATA_DIR;
   let dbPath;
 
   if (dbDir) {
