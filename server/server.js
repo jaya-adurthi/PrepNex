@@ -33,15 +33,26 @@ app.use('/api/interviews', interviewRoutes);
 app.use('/api/achievements', achievementRoutes);
 app.use('/api/user', userRoutes);
 
+const fs = require('fs');
+
 // Serve static frontend in production if built
-const distPath = path.join(__dirname, '../dist');
-if (require('fs').existsSync(distPath)) {
+const candidateDist1 = path.join(__dirname, '../dist');
+const candidateDist2 = path.join(process.cwd(), 'dist');
+const distPath = fs.existsSync(candidateDist1) ? candidateDist1 : (fs.existsSync(candidateDist2) ? candidateDist2 : candidateDist1);
+
+if (fs.existsSync(distPath)) {
+  console.log(`📁 Serving static frontend build from: ${distPath}`);
   app.use(express.static(distPath));
   app.use((req, res, next) => {
     if (req.path.startsWith('/api')) {
       return res.status(404).json({ error: 'API endpoint not found.' });
     }
     res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  console.warn(`⚠️ Warning: Static frontend build directory not found at ${distPath}. Ensure build command is "npm install && npm run build".`);
+  app.get('/', (req, res) => {
+    res.status(200).send('PrepNex API Server is running. Frontend build (dist) was not found. Please ensure Render Build Command is "npm install && npm run build".');
   });
 }
 

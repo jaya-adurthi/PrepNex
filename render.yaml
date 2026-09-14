@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: prepnex
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: node server/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: JWT_SECRET
+        generateValue: true
+    disk:
+      name: prepnex-db-disk
+      mountPath: /var/data
+      sizeGB: 1
