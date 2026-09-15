@@ -36,16 +36,20 @@ export default function Courses({ setActivePage, setSelectedTopicId }) {
   // Hash Router Integration
   useEffect(() => {
     const parseHash = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (!hash || hash === 'courses' || hash === 'programming') {
+      const rawHash = window.location.hash ? window.location.hash.replace('#', '') : window.location.pathname;
+      const cleanHash = rawHash.replace(/^\//, '').trim();
+
+      if (!cleanHash || cleanHash === 'courses' || cleanHash === 'programming' || cleanHash === 'programming-languages') {
         setViewMode('grid');
         return;
       }
 
-      const parts = hash.split('/');
-      if (parts[0] === 'programming' || parts[0] === 'courses') {
-        if (parts[1] && programmingLanguagesData[parts[1]]) {
-          setSelectedLangKey(parts[1]);
+      const parts = cleanHash.split('/');
+      const rootSegment = parts[0];
+      if (rootSegment === 'programming-languages' || rootSegment === 'programming' || rootSegment === 'courses') {
+        const langKey = parts[1];
+        if (langKey && programmingLanguagesData[langKey]) {
+          setSelectedLangKey(langKey);
           if (parts[2]) {
             setSelectedTopicKey(parts[2]);
             setViewMode('detail');
@@ -55,23 +59,29 @@ export default function Courses({ setActivePage, setSelectedTopicId }) {
         } else {
           setViewMode('grid');
         }
+      } else {
+        setViewMode('grid');
       }
     };
 
     parseHash();
     window.addEventListener('hashchange', parseHash);
-    return () => window.removeEventListener('hashchange', parseHash);
+    window.addEventListener('popstate', parseHash);
+    return () => {
+      window.removeEventListener('hashchange', parseHash);
+      window.removeEventListener('popstate', parseHash);
+    };
   }, []);
 
   const navigateToGrid = () => {
     setViewMode('grid');
-    window.location.hash = 'programming';
+    window.location.hash = 'programming-languages';
   };
 
   const navigateToTopics = (langKey) => {
     setSelectedLangKey(langKey);
     setViewMode('topics');
-    window.location.hash = `programming/${langKey}`;
+    window.location.hash = `programming-languages/${langKey}`;
   };
 
   const navigateToDetail = (langKey, topicKey) => {
@@ -80,7 +90,7 @@ export default function Courses({ setActivePage, setSelectedTopicId }) {
     setUserAnswers({});
     setQuizSubmitted(false);
     setViewMode('detail');
-    window.location.hash = `programming/${langKey}/${topicKey}`;
+    window.location.hash = `programming-languages/${langKey}/${topicKey}`;
   };
 
   const currentLang = programmingLanguagesData[selectedLangKey] || programmingLanguagesData.python;

@@ -539,8 +539,78 @@ body {
 
 // Fallback topic detail builder for any requested topic slug
 export function getTopicDetail(topicId) {
+  if (!topicId) return programmingTopicDetails["python-operators-all"];
+
+  // Direct lookup
   if (programmingTopicDetails[topicId]) {
     return programmingTopicDetails[topicId];
+  }
+
+  // Alias map for short & alternative topic slugs
+  const aliasMap = {
+    "operators": "python-operators-all",
+    "python-operators": "python-operators-all",
+    "syntax-variables": "python-variables",
+    "variables": "python-variables",
+    "introduction": "python-intro",
+    "intro": "python-intro",
+    "data-types": "python-data-types",
+    "input-output": "python-input-output",
+    "conditional-statements": "python-if-else",
+    "loops": "python-for-loop",
+    "strings": "python-ds-strings",
+    "lists": "python-ds-lists",
+    "tuples": "python-ds-tuples",
+    "sets": "python-ds-sets",
+    "dictionaries": "python-ds-dicts",
+    "functions": "python-fn-basics",
+    "lambda-functions": "python-fn-lambda",
+    "recursion": "python-fn-recursion",
+    "exception-handling": "python-exception-handling",
+    "file-handling": "python-file-handling",
+    "oop": "python-classes-objects",
+    "classes-objects": "python-classes-objects",
+    "inheritance": "python-inheritance",
+    "polymorphism": "python-inheritance",
+    "encapsulation": "python-encapsulation",
+    "modules-packages": "python-modules-packages",
+    "list-comprehension": "python-list-comprehension",
+    // Java Aliases
+    "jvm": "java-jvm",
+    "syntax": "java-syntax",
+    "control-flow": "java-control-flow",
+    "arrays": "java-arrays",
+    "constructors": "java-constructors",
+    "interfaces": "java-interfaces",
+    "exceptions": "java-exceptions",
+    "collections": "java-collections",
+    "hashmap": "java-hashmap",
+    "generics": "java-generics",
+    "multithreading": "java-threads",
+    // HTML Aliases
+    "structure": "html-structure",
+    "text": "html-text",
+    "links": "html-links",
+    "media": "html-media",
+    "tables": "html-tables",
+    "forms": "html-forms",
+    "semantic": "html-semantic",
+    "storage": "html-storage",
+    // CSS Aliases
+    "selectors": "css-selectors",
+    "styling": "css-styling",
+    "box-model": "css-box-model",
+    "display": "css-display",
+    "position": "css-position",
+    "flexbox": "css-flexbox",
+    "grid": "css-grid",
+    "responsive": "css-responsive",
+    "animations": "css-animations",
+    "tailwind": "css-tailwind"
+  };
+
+  if (aliasMap[topicId] && programmingTopicDetails[aliasMap[topicId]]) {
+    return programmingTopicDetails[aliasMap[topicId]];
   }
 
   // Generic fallback format if specific detail is not pre-populated
@@ -556,34 +626,39 @@ export function getTopicDetail(topicId) {
   return {
     title: readableTitle,
     language: lang,
-    category: `${lang} Fundamentals`,
+    category: `${lang} Topics`,
     difficulty: "Easy",
     estimatedMinutes: 20,
-    whatIsIt: `${readableTitle} is a core concept in ${lang} programming and web development.`,
-    whyUsed: `Understanding ${readableTitle} is critical for writing robust code, answering placement interview questions, and building practical applications.`,
+    whatIsIt: `${readableTitle} is an essential concept in ${lang} programming and web development.`,
+    whyUsed: `Mastering ${readableTitle} is critical for building practical software, answering placement technical interview questions, and writing efficient code.`,
+    subtopics: [
+      { name: `1. Core Principles of ${readableTitle}`, desc: `Fundamental concepts and theory behind ${readableTitle}.` },
+      { name: `2. Syntax & Application`, desc: `How to declare, format, and apply ${readableTitle} in real programs.` },
+      { name: `3. Placement & Interview Tips`, desc: `Common questions and edge cases regarding ${readableTitle}.` }
+    ],
     syntax: `// Basic ${readableTitle} syntax\n// Example usage in ${lang}`,
-    codeExample: `// ${readableTitle} Code Example\n// ${lang} demonstration\n\nconsole.log("Mastering ${readableTitle} on PrepNex!");`,
+    codeExample: `# ${readableTitle} Code Example in ${lang}\n\ndef demo_${readableTitle.toLowerCase().replace(/\s+/g, '_')}():\n    print("Mastering ${readableTitle} on PrepNex!")\n\ndemo_${readableTitle.toLowerCase().replace(/\s+/g, '_')}()`,
     expectedOutput: `Mastering ${readableTitle} on PrepNex!`,
     keyPoints: [
-      `Mastering ${readableTitle} enhances problem solving in ${lang}.`,
-      "Follow clean code conventions and proper syntax.",
-      "Test edge cases and handle potential errors gracefully."
+      `Mastering ${readableTitle} enhances problem-solving skills in ${lang}.`,
+      "Follow clean code conventions and proper language syntax.",
+      "Test edge cases and verify output precision."
     ],
     commonMistakes: [
-      "Syntax mismatch or missing required block delimiters.",
-      "Not checking edge case inputs."
+      "Syntax mismatch or missing required bracket/parenthesis delimiters.",
+      "Not accounting for edge case inputs."
     ],
     quiz: [
       {
-        question: `What is the primary objective of ${readableTitle}?`,
+        question: `What is the primary purpose of ${readableTitle}?`,
         options: [
-          `To structure logic cleanly in ${lang}`,
-          "To format terminal output",
-          "To disable garbage collection",
+          `To structure logic and solve problems efficiently in ${lang}`,
+          "To format terminal window output",
+          "To override standard garbage collection",
           "None of the above"
         ],
         correct: 0,
-        explanation: `${readableTitle} helps structure clean logic in ${lang}.`
+        explanation: `${readableTitle} helps structure clean logic and solve placement coding challenges.`
       }
     ]
   };

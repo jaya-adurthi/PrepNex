@@ -29,7 +29,7 @@ export default function Navbar({ activePage, setActivePage }) {
     { id: 'home', label: 'Home', icon: LayoutDashboard },
     { id: 'aptitude', label: 'Aptitude', icon: Calculator },
     { id: 'dsapatterns', label: 'DSA', icon: Code2 },
-    { id: 'courses', label: 'Courses', icon: BookOpen },
+    { id: 'programming-languages', label: 'Programming Languages', icon: BookOpen },
     { id: 'mylearning', label: 'My Learning', icon: GraduationCap },
     { id: 'mockinterview', label: 'Mock Interview', icon: Sparkles },
     { id: 'progress', label: 'Progress', icon: BarChart2 }

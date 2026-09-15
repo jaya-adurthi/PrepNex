@@ -315,8 +315,8 @@ export default function Home({ setActivePage, setSelectedTopicId }) {
               <span className="text-xs text-slate-400 font-semibold">Python • Java • C • HTML/CSS</span>
               <button
                 onClick={() => {
-                  setSelectedTopicId('python-basics');
-                  setActivePage('topic');
+                  window.location.hash = 'programming-languages';
+                  setActivePage('courses');
                 }}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold hover:bg-teal-500 hover:text-slate-950 transition-all"
               >

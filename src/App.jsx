@@ -24,17 +24,17 @@ function AppContent() {
   // URL Hash Router Sync
   useEffect(() => {
     const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
+      const hash = window.location.hash.replace('#', '').replace(/^\//, '');
       if (!hash) {
         setActivePage('home');
         return;
       }
 
-      if (hash.startsWith('dsa') || hash.startsWith('/dsa')) {
+      if (hash.startsWith('dsa')) {
         setActivePage('dsapatterns');
-      } else if (hash.startsWith('aptitude') || hash.startsWith('/aptitude')) {
+      } else if (hash.startsWith('aptitude')) {
         setActivePage('aptitude');
-      } else if (hash.startsWith('courses')) {
+      } else if (hash.startsWith('programming-languages') || hash.startsWith('programming') || hash.startsWith('courses')) {
         setActivePage('courses');
       } else if (hash.startsWith('mylearning')) {
         setActivePage('mylearning');
@@ -64,6 +64,8 @@ function AppContent() {
     setActivePage(pageId);
     if (pageId === 'dsapatterns') {
       window.location.hash = 'dsa';
+    } else if (pageId === 'courses' || pageId === 'programming-languages') {
+      window.location.hash = 'programming-languages';
     } else {
       window.location.hash = pageId;
     }
