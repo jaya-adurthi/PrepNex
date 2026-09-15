@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { dsaTopics } from '../../server/dsaData';
+import { dsaTopics } from '../data/dsaData';
 import {
   Code2,
   ExternalLink,

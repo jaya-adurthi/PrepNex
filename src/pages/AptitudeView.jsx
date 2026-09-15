@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { aptitudeTopics } from '../../server/aptitudeData';
+import { aptitudeTopics } from '../data/aptitudeData';
 import {
   Calculator,
   Percent,
