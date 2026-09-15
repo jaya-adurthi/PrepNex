@@ -1,466 +1,501 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { apiRequest } from '../utils/api';
+import { programmingLanguagesData } from '../data/programmingLanguagesData';
+import { getTopicDetail } from '../data/programmingTopicDetails';
 import {
   BookOpen,
-  Calculator,
-  Code2,
-  Terminal,
-  CheckCircle2,
-  Clock,
-  Zap,
-  Trash2,
-  X,
-  ArrowRight,
+  ArrowLeft,
   ChevronRight,
   Code,
+  Zap,
+  CheckCircle2,
+  Clock,
   Sparkles,
-  Layers
+  HelpCircle,
+  XCircle,
+  AlertTriangle,
+  Lightbulb,
+  Terminal,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 
 export default function Courses({ setActivePage, setSelectedTopicId }) {
-  const { user, openAuthModal } = useAuth();
+  const { user } = useAuth();
 
-  const [courses, setCourses] = useState([]);
-  const [enrollments, setEnrollments] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('PROGRAMMING'); // Default to PROGRAMMING so user can choose language right away!
-  const [loading, setLoading] = useState(true);
+  // Navigation State: 'grid' (Language Selection) | 'topics' (Topic List) | 'detail' (Topic Explanation)
+  const [viewMode, setViewMode] = useState('grid');
+  const [selectedLangKey, setSelectedLangKey] = useState('python');
+  const [selectedTopicKey, setSelectedTopicKey] = useState('python-operators-all');
 
-  // Selected Language state
-  const [selectedLangId, setSelectedLangId] = useState('python-programming');
-  const [langTopics, setLangTopics] = useState([]);
-  const [loadingTopics, setLoadingTopics] = useState(false);
+  // Quiz State
+  const [userAnswers, setUserAnswers] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [scorePercentage, setScorePercentage] = useState(0);
 
-  // Goal Modal State
-  const [enrollingCourse, setEnrollingCourse] = useState(null);
-  const [selectedMinutes, setSelectedMinutes] = useState(30);
-
-  const loadCoursesData = async () => {
-    try {
-      setLoading(true);
-      const coursesRes = await apiRequest('/courses');
-      setCourses(coursesRes.courses || []);
-
-      if (user) {
-        const envRes = await apiRequest('/enrollments');
-        setEnrollments(envRes.enrollments || []);
-      }
-    } catch (err) {
-      console.error('Failed to load courses:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loadLangTopics = async (courseId) => {
-    try {
-      setLoadingTopics(true);
-      const res = await apiRequest(`/courses/${courseId}`);
-      setLangTopics(res.topics || []);
-    } catch (err) {
-      console.error('Failed to load course topics:', err);
-      setLangTopics([]);
-    } finally {
-      setLoadingTopics(false);
-    }
-  };
-
+  // Hash Router Integration
   useEffect(() => {
-    loadCoursesData();
-  }, [user]);
-
-  useEffect(() => {
-    if (selectedLangId) {
-      loadLangTopics(selectedLangId);
-    }
-  }, [selectedLangId]);
-
-  const enrolledCourseIds = new Set(enrollments.map(e => e.course_id));
-
-  const handleEnrollClick = (course) => {
-    if (!user) {
-      openAuthModal('register');
-      return;
-    }
-    setEnrollingCourse(course);
-    setSelectedMinutes(30);
-  };
-
-  const confirmEnrollment = async () => {
-    if (!enrollingCourse) return;
-    try {
-      await apiRequest('/enrollments/enroll', 'POST', {
-        courseId: enrollingCourse.id,
-        dailyGoalMinutes: selectedMinutes
-      });
-      setEnrollingCourse(null);
-      await loadCoursesData();
-    } catch (err) {
-      alert(err.message || 'Failed to enroll');
-    }
-  };
-
-  const handleUnenroll = async (courseId) => {
-    if (!window.confirm('Are you sure you want to unenroll from this course?')) return;
-    try {
-      await apiRequest(`/enrollments/${courseId}`, 'DELETE');
-      await loadCoursesData();
-    } catch (err) {
-      console.error('Unenroll error:', err);
-    }
-  };
-
-  const handleLearnCourse = async (courseId, category) => {
-    if (category === 'DSA') {
-      setActivePage('dsapatterns');
-      return;
-    }
-    if (category === 'APTITUDE') {
-      setActivePage('aptitude');
-      return;
-    }
-
-    try {
-      const res = await apiRequest(`/courses/${courseId}`);
-      const topics = res.topics || [];
-      if (topics.length > 0) {
-        setSelectedTopicId(topics[0].id);
-        setActivePage('topic');
+    const parseHash = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (!hash || hash === 'courses' || hash === 'programming') {
+        setViewMode('grid');
+        return;
       }
-    } catch (err) {
-      setSelectedTopicId('python-basics');
-      setActivePage('topic');
-    }
+
+      const parts = hash.split('/');
+      if (parts[0] === 'programming' || parts[0] === 'courses') {
+        if (parts[1] && programmingLanguagesData[parts[1]]) {
+          setSelectedLangKey(parts[1]);
+          if (parts[2]) {
+            setSelectedTopicKey(parts[2]);
+            setViewMode('detail');
+          } else {
+            setViewMode('topics');
+          }
+        } else {
+          setViewMode('grid');
+        }
+      }
+    };
+
+    parseHash();
+    window.addEventListener('hashchange', parseHash);
+    return () => window.removeEventListener('hashchange', parseHash);
+  }, []);
+
+  const navigateToGrid = () => {
+    setViewMode('grid');
+    window.location.hash = 'programming';
   };
 
-  const programmingLanguages = [
-    { id: 'python-programming', name: 'Python', icon: '🐍', color: 'from-amber-500/20 to-yellow-500/10 border-amber-500/30 text-amber-400', badge: 'Popular' },
-    { id: 'java-programming', name: 'Java', icon: '☕', color: 'from-orange-500/20 to-amber-500/10 border-orange-500/30 text-orange-400', badge: 'Core OOP' },
-    { id: 'c-programming', name: 'C Language', icon: '⚡', color: 'from-blue-500/20 to-cyan-500/10 border-blue-500/30 text-blue-400', badge: 'Low-Level' },
-    { id: 'html-css-web', name: 'HTML & CSS', icon: '🎨', color: 'from-pink-500/20 to-rose-500/10 border-pink-500/30 text-pink-400', badge: 'Web Dev' },
-    { id: 'javascript-programming', name: 'JavaScript', icon: '💻', color: 'from-yellow-500/20 to-amber-500/10 border-yellow-500/30 text-yellow-400', badge: 'Modern ES6+' },
-    { id: 'sql-database', name: 'SQL & DB', icon: '🗄️', color: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-400', badge: 'Database' }
-  ];
+  const navigateToTopics = (langKey) => {
+    setSelectedLangKey(langKey);
+    setViewMode('topics');
+    window.location.hash = `programming/${langKey}`;
+  };
 
-  const selectedLangCourse = courses.find(c => c.id === selectedLangId) || courses.find(c => c.category === 'PROGRAMMING');
-  const isSelectedLangEnrolled = selectedLangCourse ? enrolledCourseIds.has(selectedLangCourse.id) : false;
+  const navigateToDetail = (langKey, topicKey) => {
+    setSelectedLangKey(langKey);
+    setSelectedTopicKey(topicKey);
+    setUserAnswers({});
+    setQuizSubmitted(false);
+    setViewMode('detail');
+    window.location.hash = `programming/${langKey}/${topicKey}`;
+  };
 
-  const filteredCourses = courses.filter(c => {
-    if (selectedCategory === 'ALL') return true;
-    return c.category === selectedCategory;
-  });
+  const currentLang = programmingLanguagesData[selectedLangKey] || programmingLanguagesData.python;
+  const currentTopic = getTopicDetail(selectedTopicKey);
+
+  const handleOptionSelect = (qIdx, optIdx) => {
+    if (quizSubmitted) return;
+    setUserAnswers(prev => ({ ...prev, [qIdx]: optIdx }));
+  };
+
+  const submitQuiz = () => {
+    if (!currentTopic.quiz || currentTopic.quiz.length === 0) return;
+    let correctCount = 0;
+    currentTopic.quiz.forEach((q, idx) => {
+      if (userAnswers[idx] === q.correct) {
+        correctCount++;
+      }
+    });
+    const pct = Math.round((correctCount / currentTopic.quiz.length) * 100);
+    setScorePercentage(pct);
+    setQuizSubmitted(true);
+  };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      {/* PAGE HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-bold uppercase tracking-wider mb-2">
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Structured Curriculum</span>
-          </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">Placement Courses & Languages</h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Choose a programming language or course to explore structured line-by-line topic roadmaps.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 text-slate-100">
 
-        {/* CATEGORY FILTER BUTTONS */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-          {[
-            { id: 'PROGRAMMING', label: '💻 PROGRAMMING' },
-            { id: 'APTITUDE', label: '🧮 APTITUDE' },
-            { id: 'DSA', label: '⚡ DSA' },
-            { id: 'ALL', label: '📚 ALL COURSES' }
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                selectedCategory === cat.id
-                  ? 'bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 shadow-md shadow-cyan-500/20'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* PROGRAMMING LANGUAGE SELECTOR SECTION */}
-      {selectedCategory === 'PROGRAMMING' && (
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-xl font-black text-white flex items-center gap-2">
-              <Terminal className="w-5 h-5 text-cyan-400" />
-              <span>Select Programming Language:</span>
-            </h2>
-            <p className="text-xs text-slate-400">
-              Click any language below to view its line-by-line topic sequence, code examples, and practice quizzes.
-            </p>
+      {/* ========================================================================= */}
+      {/* PAGE 1: LANGUAGE SELECTION GRID */}
+      {/* ========================================================================= */}
+      {viewMode === 'grid' && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          
+          {/* HEADER BANNER */}
+          <div className="border-b border-slate-800 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-bold uppercase tracking-wider mb-2">
+                <Code className="w-3.5 h-3.5" />
+                <span>Programming Languages</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Select a Language</h1>
+              <p className="text-slate-400 text-sm mt-1 max-w-2xl">
+                Choose a programming language to explore complete beginner-to-advanced topic lists, syntax rules, code examples, and practice quizzes.
+              </p>
+            </div>
           </div>
 
-          {/* LANGUAGE CARDS GRID */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4">
-            {programmingLanguages.map((lang) => {
-              const isSelected = selectedLangId === lang.id;
+          {/* 4 CORE LANGUAGE CARDS GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {Object.keys(programmingLanguagesData).map((key) => {
+              const lang = programmingLanguagesData[key];
               return (
-                <button
+                <div
                   key={lang.id}
-                  onClick={() => setSelectedLangId(lang.id)}
-                  className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
-                    isSelected
-                      ? `bg-gradient-to-br ${lang.color} border-cyan-400 ring-2 ring-cyan-500/50 shadow-xl scale-105`
-                      : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:bg-slate-800/80'
-                  }`}
+                  className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between space-y-6 group shadow-xl"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-2xl">{lang.icon}</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-950/80 text-cyan-400 border border-slate-800">
-                      {lang.badge}
-                    </span>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center text-3xl shadow-inner group-hover:scale-110 transition-transform">
+                        {lang.icon}
+                      </div>
+                      <span className={`px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-slate-950 border border-slate-800 text-cyan-400`}>
+                        {lang.badge}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h2 className="text-2xl font-black text-white group-hover:text-cyan-400 transition-colors">
+                        {lang.name}
+                      </h2>
+                      <p className="text-slate-400 text-xs leading-relaxed mt-2">{lang.description}</p>
+                    </div>
+
+                    <div className="flex items-center gap-4 text-xs font-semibold text-slate-400 pt-2 border-t border-slate-800/80">
+                      <span>📚 {lang.totalTopics} Complete Topics</span>
+                      <span>•</span>
+                      <span>⚡ Beginner to Advanced</span>
+                    </div>
                   </div>
 
-                  <div>
-                    <h3 className="text-base font-extrabold text-white">{lang.name}</h3>
-                    <p className="text-[11px] text-slate-400 mt-0.5 font-medium">
-                      {isSelected ? '✓ Selected' : 'Click to view'}
-                    </p>
-                  </div>
-                </button>
+                  <button
+                    onClick={() => navigateToTopics(lang.id)}
+                    className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-extrabold text-sm hover:opacity-95 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>Explore {lang.name} Topics</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               );
             })}
           </div>
 
-          {/* SELECTED LANGUAGE TOPIC ROADMAP (LINE-BY-LINE) */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-6 shadow-2xl">
-            {selectedLangCourse && (
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider bg-cyan-500/10 px-3 py-1 rounded-full border border-cyan-500/20">
-                      {selectedLangCourse.title}
-                    </span>
-                    <span className="text-xs text-slate-400">• {langTopics.length} Topics Line-by-Line</span>
-                  </div>
-                  <h3 className="text-2xl font-black text-white mt-1">{selectedLangCourse.title} Topic Roadmap</h3>
-                  <p className="text-xs text-slate-400 mt-1 max-w-2xl">{selectedLangCourse.description}</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  {isSelectedLangEnrolled ? (
-                    <span className="px-4 py-2 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4" />
-                      Enrolled in {selectedLangCourse.title}
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => handleEnrollClick(selectedLangCourse)}
-                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 text-xs font-extrabold hover:opacity-95 shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2"
-                    >
-                      <span>Enroll in {selectedLangCourse.title}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* TOPICS LIST (LINE BY LINE) */}
-            {loadingTopics ? (
-              <div className="space-y-3">
-                {[1, 2, 3, 4].map((n) => (
-                  <div key={n} className="h-16 rounded-2xl bg-slate-950 animate-pulse"></div>
-                ))}
-              </div>
-            ) : langTopics.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 text-xs">
-                No topics found for this language.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {langTopics.map((topic, index) => (
-                  <div
-                    key={topic.id}
-                    className="p-4 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800/90 hover:border-cyan-500/40 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
-                  >
-                    <div className="flex items-start sm:items-center gap-4">
-                      {/* Topic Number Badge */}
-                      <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 text-cyan-400 font-black text-sm flex items-center justify-center shrink-0 group-hover:border-cyan-500/50 group-hover:bg-cyan-500/10 transition-colors">
-                        {index + 1}
-                      </div>
-
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-base font-extrabold text-white group-hover:text-cyan-400 transition-colors">
-                            {topic.title}
-                          </h4>
-                          <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold ${
-                            topic.difficulty === 'Easy' ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' :
-                            topic.difficulty === 'Hard' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
-                            'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                          }`}>
-                            {topic.difficulty || 'Easy'}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-400 line-clamp-1">{topic.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
-                      <span className="text-[11px] text-slate-500 font-semibold flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
-                        {topic.estimated_minutes} mins
-                      </span>
-
-                      <button
-                        onClick={() => {
-                          setSelectedTopicId(topic.id);
-                          setActivePage('topic');
-                        }}
-                        className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold hover:bg-cyan-500 hover:text-slate-950 transition-all flex items-center gap-1.5"
-                      >
-                        <span>Learn Topic</span>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       )}
 
-      {/* ALL COURSES CATALOG GRID (FOR ALL / APTITUDE / DSA) */}
-      {selectedCategory !== 'PROGRAMMING' && (
-        <>
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((n) => (
-                <div key={n} className="h-64 rounded-3xl bg-slate-900/60 border border-slate-800 animate-pulse"></div>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCourses.map((course) => {
-                const isEnrolled = enrolledCourseIds.has(course.id);
-                const userEnv = enrollments.find(e => e.course_id === course.id);
+      {/* ========================================================================= */}
+      {/* PAGE 2: TOPICS LIST PAGE FOR SELECTED LANGUAGE */}
+      {/* ========================================================================= */}
+      {viewMode === 'topics' && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          
+          {/* BREADCRUMB / BACK BUTTON */}
+          <button
+            onClick={navigateToGrid}
+            className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl"
+          >
+            <ArrowLeft className="w-4 h-4 text-cyan-400" />
+            <span>Back to Language Selection</span>
+          </button>
 
-                return (
-                  <div
-                    key={course.id}
-                    className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between space-y-4"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center font-bold text-cyan-400 text-xl">
-                          {course.category === 'APTITUDE' ? '🧮' : course.category === 'DSA' ? '⚡' : '💻'}
+          {/* SELECTED LANGUAGE HEADER BANNER */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-cyan-950/30 to-slate-900 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-6 shadow-2xl">
+            <div className="flex items-start sm:items-center gap-4">
+              <div className="w-16 h-16 rounded-2xl bg-slate-950 border border-slate-800 text-4xl flex items-center justify-center shrink-0 shadow-inner">
+                {currentLang.icon}
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 uppercase tracking-wider">
+                    {currentLang.badge}
+                  </span>
+                  <span className="text-xs text-slate-400 font-semibold">• {currentLang.totalTopics} Topics</span>
+                </div>
+                <h1 className="text-3xl font-black text-white">{currentLang.title} Topics</h1>
+                <p className="text-xs text-slate-400 max-w-2xl">{currentLang.description}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* TOPICS CATEGORIES AND ROADMAP (LINE BY LINE) */}
+          <div className="space-y-8">
+            {currentLang.categories.map((cat, catIdx) => (
+              <div key={cat.id} className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+                <div className="border-b border-slate-800 pb-3">
+                  <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                    <span className="w-7 h-7 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-black flex items-center justify-center">
+                      {catIdx + 1}
+                    </span>
+                    <span>{cat.title}</span>
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-1 pl-9">{cat.description}</p>
+                </div>
+
+                {/* TOPIC ITEMS LIST */}
+                <div className="space-y-3 pt-2">
+                  {cat.topics.map((topic, topicIdx) => (
+                    <div
+                      key={topic.id}
+                      className="p-4 sm:p-5 rounded-2xl bg-slate-950 border border-slate-800/90 hover:border-cyan-500/40 transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group"
+                    >
+                      <div className="flex items-start sm:items-center gap-4">
+                        <div className="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 group-hover:text-cyan-400 group-hover:border-cyan-500/40 font-bold text-xs flex items-center justify-center shrink-0 transition-colors">
+                          {topicIdx + 1}
                         </div>
-                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-300 border border-slate-700">
-                          {course.category}
-                        </span>
+                        <div className="space-y-1">
+                          <h3 className="text-base font-extrabold text-white group-hover:text-cyan-400 transition-colors">
+                            {topic.title}
+                          </h3>
+                          <p className="text-xs text-slate-400 line-clamp-1">{topic.description}</p>
+                        </div>
                       </div>
 
-                      <h3 className="text-xl font-extrabold text-white mb-2">{course.title}</h3>
-                      <p className="text-slate-400 text-xs leading-relaxed mb-4">{course.description}</p>
-                      
-                      <div className="flex items-center gap-4 text-xs font-semibold text-slate-400">
-                        <span>📚 {course.total_topics} Topics</span>
-                        <span>•</span>
-                        <span>⚡ {course.level}</span>
-                      </div>
+                      <button
+                        onClick={() => navigateToDetail(currentLang.id, topic.id)}
+                        className="px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold hover:bg-cyan-500 hover:text-slate-950 transition-all flex items-center justify-center gap-1.5 shrink-0"
+                      >
+                        <span>View Explanation & Examples</span>
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
                     </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between">
-                      {isEnrolled ? (
-                        <div className="flex items-center justify-between w-full">
-                          <span className="px-3 py-1 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-400 text-xs font-bold flex items-center gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            Enrolled ({userEnv ? userEnv.daily_goal_minutes : 30}m/day)
-                          </span>
-                          
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleLearnCourse(course.id, course.category)}
-                              className="px-3 py-1.5 rounded-xl bg-cyan-500 text-slate-950 text-xs font-bold hover:opacity-90 transition-all"
-                            >
-                              Learn Now
-                            </button>
-                            <button
-                              onClick={() => handleUnenroll(course.id)}
-                              className="p-1.5 rounded-xl text-rose-400 hover:bg-rose-500/10 transition-colors"
-                              title="Unenroll"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleEnrollClick(course)}
-                          className="w-full py-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs hover:bg-cyan-500 hover:text-slate-950 transition-all flex items-center justify-center gap-2"
-                        >
-                          <span>Enroll In Course</span>
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </>
+        </div>
       )}
 
-      {/* DAILY GOAL MODAL */}
-      {enrollingCourse && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
-          <div className="relative w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-2xl text-slate-100">
-            <button
-              onClick={() => setEnrollingCourse(null)}
-              className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* ========================================================================= */}
+      {/* PAGE 3: TOPIC DETAILS & EXPLANATION PAGE */}
+      {/* ========================================================================= */}
+      {viewMode === 'detail' && (
+        <div className="space-y-8 animate-in fade-in duration-300">
+          
+          {/* BREADCRUMB / BACK BUTTON */}
+          <button
+            onClick={() => navigateToTopics(currentLang.id)}
+            className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white transition-colors bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl"
+          >
+            <ArrowLeft className="w-4 h-4 text-cyan-400" />
+            <span>Back to {currentLang.name} Topics</span>
+          </button>
 
-            <div className="text-center">
-              <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mx-auto mb-3">
-                <Clock className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-extrabold text-white">Set Daily Learning Goal</h3>
-              <p className="text-xs text-slate-400 mt-1">
-                How much time can you spend learning <span className="text-cyan-400 font-bold">{enrollingCourse.title}</span> every day?
-              </p>
+          {/* TOPIC HEADER */}
+          <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-cyan-950/30 to-slate-900 border border-slate-800 space-y-3 shadow-2xl">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 uppercase tracking-wider">
+                {currentTopic.language} • {currentTopic.category}
+              </span>
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-teal-500/10 text-teal-400 border border-teal-500/30">
+                {currentTopic.difficulty || 'Easy'}
+              </span>
+              <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" />
+                {currentTopic.estimatedMinutes || 20} min read
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              {[10, 20, 30, 60].map((min) => (
-                <button
-                  key={min}
-                  onClick={() => setSelectedMinutes(min)}
-                  className={`p-4 rounded-2xl border text-center transition-all ${
-                    selectedMinutes === min
-                      ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400 font-extrabold'
-                      : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
-                  }`}
-                >
-                  <p className="text-lg font-black">{min} Mins</p>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Per day target</p>
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={confirmEnrollment}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-bold text-sm hover:opacity-95 shadow-lg shadow-cyan-500/20 transition-all"
-            >
-              Confirm Enrollment & Generate Plan
-            </button>
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">{currentTopic.title}</h1>
           </div>
+
+          {/* WHAT IS IT & WHY USED */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-2 shadow-lg">
+              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-cyan-400" />
+                <span>What is it?</span>
+              </h2>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{currentTopic.whatIsIt}</p>
+            </div>
+
+            <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-2 shadow-lg">
+              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <span>Why is it used?</span>
+              </h2>
+              <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">{currentTopic.whyUsed}</p>
+            </div>
+          </div>
+
+          {/* SUBTOPICS / TYPES BREAKDOWN */}
+          {currentTopic.subtopics && currentTopic.subtopics.length > 0 && (
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+              <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                <Layers className="w-5 h-5 text-purple-400" />
+                <span>Types & Subtopics Breakdown</span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                {currentTopic.subtopics.map((sub, idx) => (
+                  <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-1.5">
+                    <h3 className="text-sm font-extrabold text-cyan-400">{sub.name}</h3>
+                    <p className="text-xs text-slate-300 leading-relaxed">{sub.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SYNTAX BOX */}
+          {currentTopic.syntax && (
+            <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-xl">
+              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-400" />
+                <span>Syntax</span>
+              </h2>
+              <div className="rounded-2xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-amber-300 overflow-x-auto whitespace-pre-wrap">
+                {currentTopic.syntax}
+              </div>
+            </div>
+          )}
+
+          {/* CODE EXAMPLES AND EXPECTED OUTPUT */}
+          {currentTopic.codeExample && (
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-6 shadow-xl">
+              <div className="space-y-3">
+                <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                  <Code className="w-5 h-5 text-teal-400" />
+                  <span>Code Example</span>
+                </h2>
+                <div className="rounded-2xl bg-slate-950 border border-slate-800 p-4 font-mono text-xs text-cyan-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
+                  {currentTopic.codeExample}
+                </div>
+              </div>
+
+              {currentTopic.expectedOutput && (
+                <div className="space-y-3">
+                  <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <Terminal className="w-4 h-4 text-emerald-400" />
+                    <span>Expected Output</span>
+                  </h3>
+                  <div className="rounded-2xl bg-slate-950 border border-emerald-500/30 p-4 font-mono text-xs text-emerald-400 overflow-x-auto whitespace-pre-wrap">
+                    {currentTopic.expectedOutput}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* IMPORTANT POINTS & COMMON MISTAKES */}
+          {((currentTopic.keyPoints && currentTopic.keyPoints.length > 0) || (currentTopic.commonMistakes && currentTopic.commonMistakes.length > 0)) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {currentTopic.keyPoints && currentTopic.keyPoints.length > 0 && (
+                <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-lg">
+                  <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-yellow-400" />
+                    <span>Important Points & Tips</span>
+                  </h2>
+                  <ul className="space-y-2 text-xs text-slate-300">
+                    {currentTopic.keyPoints.map((pt, idx) => (
+                      <li key={idx} className="flex items-start gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span className="text-teal-400 font-bold">•</span>
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {currentTopic.commonMistakes && currentTopic.commonMistakes.length > 0 && (
+                <div className="p-6 rounded-3xl bg-slate-900/90 border border-slate-800 space-y-3 shadow-lg">
+                  <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5 text-rose-400" />
+                    <span>Common Mistakes to Avoid</span>
+                  </h2>
+                  <ul className="space-y-2 text-xs text-slate-300">
+                    {currentTopic.commonMistakes.map((m, idx) => (
+                      <li key={idx} className="flex items-start gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        <span className="text-rose-400 font-bold">•</span>
+                        <span>{m}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* INTERACTIVE TOPIC QUIZ */}
+          {currentTopic.quiz && currentTopic.quiz.length > 0 && (
+            <div className="p-6 sm:p-8 rounded-3xl bg-slate-900/90 border border-cyan-500/30 space-y-6 shadow-2xl">
+              <div className="border-b border-slate-800 pb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-extrabold text-white flex items-center gap-2">
+                    <HelpCircle className="w-5 h-5 text-cyan-400" />
+                    <span>Topic Mastery Quiz</span>
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-0.5">Test your understanding of {currentTopic.title}.</p>
+                </div>
+              </div>
+
+              {quizSubmitted ? (
+                <div className="space-y-4">
+                  <div className={`p-6 rounded-2xl text-center space-y-1 border ${
+                    scorePercentage >= 60 ? 'bg-teal-500/10 border-teal-500/40 text-teal-300' : 'bg-rose-500/10 border-rose-500/40 text-rose-300'
+                  }`}>
+                    <p className="text-3xl font-black">{scorePercentage}% Score</p>
+                    <p className="text-xs font-bold">
+                      {scorePercentage >= 60 ? '🎉 Excellent! Topic Mastered.' : '⚠️ Review the explanation and try again.'}
+                    </p>
+                  </div>
+
+                  {currentTopic.quiz.map((q, idx) => {
+                    const isCorrect = userAnswers[idx] === q.correct;
+                    return (
+                      <div key={idx} className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1.5">
+                        <div className="flex items-start gap-2 font-bold text-slate-100">
+                          {isCorrect ? <CheckCircle2 className="w-4 h-4 text-teal-400 shrink-0 mt-0.5" /> : <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />}
+                          <span>Q{idx + 1}: {q.question}</span>
+                        </div>
+                        <p className="text-slate-400 pl-6">
+                          Explanation: <span className="italic">{q.explanation}</span>
+                        </p>
+                      </div>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => {
+                      setUserAnswers({});
+                      setQuizSubmitted(false);
+                    }}
+                    className="px-6 py-2.5 rounded-xl bg-slate-800 text-slate-200 text-xs font-bold hover:bg-slate-700 transition-colors"
+                  >
+                    Retake Quiz
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {currentTopic.quiz.map((q, qIdx) => (
+                    <div key={qIdx} className="p-5 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
+                      <p className="text-sm font-bold text-white">Q{qIdx + 1}: {q.question}</p>
+                      <div className="space-y-2">
+                        {q.options.map((opt, optIdx) => {
+                          const isSelected = userAnswers[qIdx] === optIdx;
+                          return (
+                            <button
+                              key={optIdx}
+                              onClick={() => handleOptionSelect(qIdx, optIdx)}
+                              className={`w-full p-3 rounded-xl border text-left text-xs font-semibold transition-all ${
+                                isSelected
+                                  ? 'bg-cyan-500/20 border-cyan-500 text-cyan-300 font-bold'
+                                  : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
+                              }`}
+                            >
+                              <span className="mr-2 opacity-60">{String.fromCharCode(65 + optIdx)}.</span>
+                              <span>{opt}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+
+                  <button
+                    onClick={submitQuiz}
+                    disabled={Object.keys(userAnswers).length < currentTopic.quiz.length}
+                    className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 font-extrabold text-sm hover:opacity-95 shadow-lg shadow-cyan-500/20 transition-all disabled:opacity-50"
+                  >
+                    Submit Quiz
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
       )}
 
