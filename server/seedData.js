@@ -26,9 +26,9 @@ const coursesData = [
     title: 'Python Programming',
     slug: 'python',
     category: 'PROGRAMMING',
-    description: 'Complete Python learning path from basic syntax to OOP and advanced concepts.',
+    description: 'Complete Python learning path from basic syntax to OOP, Data Structures, and File I/O.',
     icon: 'Terminal',
-    total_topics: 22,
+    total_topics: 7,
     level: 'Beginner to Advanced'
   },
   {
@@ -37,8 +37,8 @@ const coursesData = [
     slug: 'java',
     category: 'PROGRAMMING',
     description: 'Master Java syntax, OOP principles, Collections framework, and Exception handling.',
-    icon: 'Coffee',
-    total_topics: 18,
+    icon: 'Terminal',
+    total_topics: 6,
     level: 'Beginner to Advanced'
   },
   {
@@ -47,8 +47,8 @@ const coursesData = [
     slug: 'c-lang',
     category: 'PROGRAMMING',
     description: 'Master low-level programming concepts, memory management, pointers, and structures.',
-    icon: 'Cpu',
-    total_topics: 13,
+    icon: 'Terminal',
+    total_topics: 6,
     level: 'Beginner to Intermediate'
   },
   {
@@ -57,9 +57,29 @@ const coursesData = [
     slug: 'html-css',
     category: 'PROGRAMMING',
     description: 'Build modern responsive web layouts using HTML5, CSS Flexbox, Grid, and animations.',
-    icon: 'Layout',
-    total_topics: 13,
+    icon: 'Terminal',
+    total_topics: 5,
     level: 'Beginner'
+  },
+  {
+    id: 'javascript-programming',
+    title: 'JavaScript Modern ES6+',
+    slug: 'javascript',
+    category: 'PROGRAMMING',
+    description: 'Master modern JS syntax, DOM manipulation, Promises, Async/Await, and Web APIs.',
+    icon: 'Terminal',
+    total_topics: 4,
+    level: 'Beginner to Intermediate'
+  },
+  {
+    id: 'sql-database',
+    title: 'SQL & Database Management',
+    slug: 'sql',
+    category: 'PROGRAMMING',
+    description: 'Master relational database queries, JOINs, aggregations, DDL, DML, and table design.',
+    icon: 'Terminal',
+    total_topics: 3,
+    level: 'Beginner to Intermediate'
   }
 ];
 
@@ -182,242 +202,13 @@ const topicsData = [
       ]
     })
   },
-  {
-    id: 'quant-time-work',
-    course_id: 'aptitude-mastery',
-    title: 'Time and Work',
-    category: 'Quantitative Aptitude',
-    order_index: 4,
-    description: 'Work efficiency, alternate day work, pipes & cisterns.',
-    estimated_minutes: 30,
-    difficulty: 'Medium',
-    content_json: JSON.stringify({
-      concept: 'Time and work problems rely on the inverse relationship between speed/efficiency and time needed to complete 1 unit of work.',
-      rules: [
-        'If A completes work in n days, A\'s 1 day work = 1/n.',
-        'Total Work = Efficiency × Time.',
-        'If A is twice as efficient as B, Ratio of Efficiency A:B = 2:1, Time ratio A:B = 1:2.',
-        'M1 × D1 × H1 / W1 = M2 × D2 × H2 / W2'
-      ],
-      solved_examples: [
-        {
-          question: 'A can do a work in 10 days, B in 15 days. In how many days together can they finish it?',
-          solution: 'Total LCM work = 30 units. A speed = 3 u/day, B speed = 2 u/day. Combined = 5 u/day. Time = 30/5 = 6 days.'
-        }
-      ],
-      question_models: ['Combined Work', 'Pipes Filling/Emptying', 'Efficiency Comparison', 'Leave before completion'],
-      quiz: [
-        {
-          id: 'q1',
-          question: 'A pipe can fill a tank in 6 hours and a leak empties it in 8 hours. If both are open, how long to fill?',
-          options: ['14 hours', '24 hours', '12 hours', '18 hours'],
-          correct: 1,
-          explanation: 'Net rate = 1/6 - 1/8 = (4-3)/24 = 1/24. So 24 hours.'
-        }
-      ]
-    })
-  },
 
-  // --- DSA PATTERN-BASED TOPICS ---
-  {
-    id: 'dsa-two-pointers',
-    course_id: 'dsa-patterns',
-    title: 'Two Pointers Pattern',
-    category: 'Arrays & Strings',
-    order_index: 1,
-    description: 'Master 2-pointer techniques for sorted arrays, searching pairs, and string reversal.',
-    estimated_minutes: 30,
-    difficulty: 'Easy',
-    leetcode_url: 'https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/',
-    content_json: JSON.stringify({
-      pattern_info: {
-        what: 'The Two Pointers pattern uses two indices to iterate through a data structure simultaneously, usually from both ends towards the center or at different speeds.',
-        when_to_use: 'Use when searching for pairs in a sorted array, reversing arrays/strings, or detecting palindrome conditions with O(1) extra space.',
-        how_to_identify: 'Look for sorted array inputs, target sum pair requirements, or palindrome verification.',
-        time_complexity: 'O(N)',
-        space_complexity: 'O(1)'
-      },
-      code_example: `function twoSumSorted(arr, target) {
-  let left = 0, right = arr.length - 1;
-  while (left < right) {
-    let sum = arr[left] + arr[right];
-    if (sum === target) return [left + 1, right + 1];
-    else if (sum < target) left++;
-    else right--;
-  }
-  return [];
-}`,
-      practice_questions: [
-        { title: 'Two Sum II - Input Array Is Sorted', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/' },
-        { title: '3Sum', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/3sum/' },
-        { title: 'Container With Most Water', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/container-with-most-water/' },
-        { title: 'Valid Palindrome', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/valid-palindrome/' }
-      ],
-      quiz: [
-        {
-          id: 'q1',
-          question: 'Why does Two Pointers require the array to be sorted for pair sum problems?',
-          options: [
-            'To enable deterministic pointer movement based on sum comparison',
-            'To reduce space complexity from O(N) to O(log N)',
-            'It does not require sorting',
-            'To allow binary tree traversal'
-          ],
-          correct: 0,
-          explanation: 'If sorted, sum < target means left++ increases sum, while sum > target means right-- decreases sum.'
-        }
-      ]
-    })
-  },
-  {
-    id: 'dsa-sliding-window',
-    course_id: 'dsa-patterns',
-    title: 'Sliding Window Pattern',
-    category: 'Arrays & Strings',
-    order_index: 2,
-    description: 'Fixed and dynamic window techniques for contiguous subarray sum, maximum, and substring problems.',
-    estimated_minutes: 35,
-    difficulty: 'Medium',
-    leetcode_url: 'https://leetcode.com/problems/longest-substring-without-repeating-characters/',
-    content_json: JSON.stringify({
-      pattern_info: {
-        what: 'Sliding Window maintains a running window (defined by left & right boundaries) over contiguous elements to compute subarray metrics without re-evaluating overlapping elements.',
-        when_to_use: 'Use when looking for longest/shortest substring or subarray meeting a condition (sum, distinct characters, maximum value).',
-        how_to_identify: 'Problem mentions contiguous subarray, contiguous substring, fixed window size K, or max/min subarray sum.',
-        time_complexity: 'O(N)',
-        space_complexity: 'O(K) or O(1)'
-      },
-      code_example: `function lengthOfLongestSubstring(s) {
-  let map = new Map(), maxLen = 0, left = 0;
-  for (let right = 0; right < s.length; right++) {
-    if (map.has(s[right])) {
-      left = Math.max(left, map.get(s[right]) + 1);
-    }
-    map.set(s[right], right);
-    maxLen = Math.max(maxLen, right - left + 1);
-  }
-  return maxLen;
-}`,
-      practice_questions: [
-        { title: 'Longest Substring Without Repeating Characters', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/longest-substring-without-repeating-characters/' },
-        { title: 'Minimum Size Subarray Sum', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/minimum-size-subarray-sum/' },
-        { title: 'Sliding Window Maximum', difficulty: 'Hard', leetcode: 'https://leetcode.com/problems/sliding-window-maximum/' }
-      ],
-      quiz: [
-        {
-          id: 'q1',
-          question: 'What is the main advantage of Sliding Window over Brute Force nested loops?',
-          options: [
-            'Reduces time complexity from O(N^2) to O(N)',
-            'Avoids memory allocation',
-            'Works on unsorted lists only',
-            'Guarantees logarithmic space'
-          ],
-          correct: 0,
-          explanation: 'By adding right element and removing left element, we process each element at most twice.'
-        }
-      ]
-    })
-  },
-  {
-    id: 'dsa-prefix-sum',
-    course_id: 'dsa-patterns',
-    title: 'Prefix Sum Pattern',
-    category: 'Arrays & Math',
-    order_index: 3,
-    description: 'Precomputing cumulative sums to answer range sum queries in O(1) time.',
-    estimated_minutes: 25,
-    difficulty: 'Easy',
-    leetcode_url: 'https://leetcode.com/problems/range-sum-query-immutable/',
-    content_json: JSON.stringify({
-      pattern_info: {
-        what: 'Prefix Sum constructs an auxiliary array P where P[i] stores the sum of elements from index 0 to i.',
-        when_to_use: 'Use when performing multiple range sum queries (sum between indices L and R) or finding subarray sum equal to K.',
-        how_to_identify: 'Multiple query requests for range sum, pivot index calculation, or subarray sum equals K.',
-        time_complexity: 'O(N) precomputation, O(1) query',
-        space_complexity: 'O(N)'
-      },
-      code_example: `// Range sum formula: sum(L...R) = Prefix[R] - Prefix[L-1]
-function SubarraySumEqualsK(nums, k) {
-  let map = new Map([[0, 1]]);
-  let count = 0, sum = 0;
-  for (let num of nums) {
-    sum += num;
-    if (map.has(sum - k)) count += map.get(sum - k);
-    map.set(sum, (map.get(sum) || 0) + 1);
-  }
-  return count;
-}`,
-      practice_questions: [
-        { title: 'Subarray Sum Equals K', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/subarray-sum-equals-k/' },
-        { title: 'Find Pivot Index', difficulty: 'Easy', leetcode: 'https://leetcode.com/problems/find-pivot-index/' },
-        { title: 'Product of Array Except Self', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/product-of-array-except-self/' }
-      ],
-      quiz: [
-        {
-          id: 'q1',
-          question: 'What is the query time complexity for finding range sum sum(L, R) after building Prefix Sum array?',
-          options: ['O(1)', 'O(log N)', 'O(N)', 'O(N log N)'],
-          correct: 0,
-          explanation: 'It is a simple arithmetic subtraction: P[R] - P[L-1].'
-        }
-      ]
-    })
-  },
-  {
-    id: 'dsa-kadanes-algorithm',
-    course_id: 'dsa-patterns',
-    title: "Kadane's Algorithm Pattern",
-    category: 'Dynamic Programming / Arrays',
-    order_index: 4,
-    description: 'Finding the maximum contiguous subarray sum in linear O(N) time.',
-    estimated_minutes: 25,
-    difficulty: 'Medium',
-    leetcode_url: 'https://leetcode.com/problems/maximum-subarray/',
-    content_json: JSON.stringify({
-      pattern_info: {
-        what: "Kadane's algorithm keeps track of current local max sum ending at each position and updates the global maximum sum.",
-        when_to_use: 'Use when finding the contiguous subarray with maximum (or minimum) sum in an array containing positive and negative numbers.',
-        how_to_identify: 'Maximum sum contiguous subarray, maximum product subarray.',
-        time_complexity: 'O(N)',
-        space_complexity: 'O(1)'
-      },
-      code_example: `function maxSubArray(nums) {
-  let maxSoFar = nums[0];
-  let currentMax = nums[0];
-  for (let i = 1; i < nums.length; i++) {
-    currentMax = Math.max(nums[i], currentMax + nums[i]);
-    maxSoFar = Math.max(maxSoFar, currentMax);
-  }
-  return maxSoFar;
-}`,
-      practice_questions: [
-        { title: 'Maximum Subarray', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/maximum-subarray/' },
-        { title: 'Maximum Product Subarray', difficulty: 'Medium', leetcode: 'https://leetcode.com/problems/maximum-product-subarray/' }
-      ],
-      quiz: [
-        {
-          id: 'q1',
-          question: "What is the core recurrence in Kadane's algorithm for currentMax at index i?",
-          options: [
-            'currentMax = Math.max(nums[i], currentMax + nums[i])',
-            'currentMax = currentMax + nums[i]',
-            'currentMax = Math.max(0, currentMax)',
-            'currentMax = nums[i] * currentMax'
-          ],
-          correct: 0,
-          explanation: 'At each element, we decide whether to start a new subarray at nums[i] or extend the existing subarray.'
-        }
-      ]
-    })
-  },
-
-  // --- PROGRAMMING LANGUAGES ---
+  // --- PYTHON TOPICS ---
   {
     id: 'python-basics',
     course_id: 'python-programming',
-    title: 'Python Syntax & Variables',
-    category: 'Basics',
+    title: '1. Python Syntax & Variables',
+    category: 'Python Basics',
     order_index: 1,
     description: 'Introduction to Python, dynamic typing, variables, input/output, and basic operators.',
     estimated_minutes: 20,
@@ -425,21 +216,16 @@ function SubarraySumEqualsK(nums, k) {
     content_json: JSON.stringify({
       concept: 'Python is a high-level, interpreted programming language known for readability and clean indentation-based syntax.',
       code_snippets: [
-        `# Python Variables & Dynamic Typing
-name = "PrepNex"
-age = 20
-is_active = True
-
-print(f"Welcome to {name}! System active: {is_active}")`,
-        `# User Input & Type Conversion
-score_str = "85"
-score_num = int(score_str)
-print("Updated score:", score_num + 10)`
+        `# Python Variables & Dynamic Typing\nname = "PrepNex"\nage = 20\nis_active = True\n\nprint(f"Welcome to {name}! System active: {is_active}")`,
+        `# User Input & Type Conversion\nscore_str = "85"\nscore_num = int(score_str)\nprint("Updated score:", score_num + 10)`
       ],
       key_rules: [
         'Indentation (4 spaces) defines code blocks instead of curly braces {}.',
         'Variables do not require explicit type declaration.',
         'Use f-strings for concise string formatting: f"Value: {val}"'
+      ],
+      solved_examples: [
+        { question: 'Write a Python snippet to swap two variables without a third variable.', solution: 'a, b = b, a' }
       ],
       quiz: [
         {
@@ -453,25 +239,51 @@ print("Updated score:", score_num + 10)`
     })
   },
   {
+    id: 'python-control-flow',
+    course_id: 'python-programming',
+    title: '2. Control Flow: Conditionals & Loops',
+    category: 'Python Control Flow',
+    order_index: 2,
+    description: 'If-elif-else statements, for loops, while loops, range(), break, and continue.',
+    estimated_minutes: 25,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'Control flow structures direct program execution based on conditions and repeat logic over sequences using loops.',
+      code_snippets: [
+        `# For Loop with range()\nfor i in range(1, 6):\n    if i % 2 == 0:\n        print(f"{i} is Even")\n    else:\n        print(f"{i} is Odd")`
+      ],
+      key_rules: [
+        'range(start, stop, step) generates sequence excluding stop value.',
+        'break exits loop immediately; continue skips to next iteration.',
+        'Python supports optional else clause on for and while loops.'
+      ],
+      solved_examples: [
+        { question: 'Sum of numbers from 1 to N using range.', solution: 'n = 10; total = sum(range(1, n+1))' }
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What does list(range(2, 8, 2)) return?',
+          options: ['[2, 4, 6]', '[2, 4, 6, 8]', '[2, 3, 4, 5, 6, 7]', '[4, 6, 8]'],
+          correct: 0,
+          explanation: 'range(2, 8, 2) starts at 2, steps by 2, and stops before 8 -> [2, 4, 6].'
+        }
+      ]
+    })
+  },
+  {
     id: 'python-lists-tuples',
     course_id: 'python-programming',
-    title: 'Python Data Structures: Lists & Tuples',
-    category: 'Data Structures',
-    order_index: 2,
+    title: '3. Data Structures: Lists & Tuples',
+    category: 'Python Data Structures',
+    order_index: 3,
     description: 'Mutable lists vs Immutable tuples, list comprehensions, slicing, and operations.',
     estimated_minutes: 25,
     difficulty: 'Easy',
     content_json: JSON.stringify({
       concept: 'Lists are ordered, mutable sequences. Tuples are ordered, immutable sequences defined with parentheses ().',
       code_snippets: [
-        `# List Comprehension example
-numbers = [1, 2, 3, 4, 5, 6]
-evens_squared = [x**2 for x in numbers if x % 2 == 0]
-print(evens_squared) # Output: [4, 16]`,
-        `# Tuple Unpacking
-point = (10, 20)
-x, y = point
-print(f"X: {x}, Y: {y}")`
+        `# List Comprehension example\nnumbers = [1, 2, 3, 4, 5, 6]\nevens_squared = [x**2 for x in numbers if x % 2 == 0]\nprint(evens_squared) # Output: [4, 16]`
       ],
       key_rules: [
         'Lists use brackets []; Tuples use parentheses ().',
@@ -490,41 +302,199 @@ print(f"X: {x}, Y: {y}")`
     })
   },
   {
+    id: 'python-dicts-sets',
+    course_id: 'python-programming',
+    title: '4. Dictionaries & Sets',
+    category: 'Python Data Structures',
+    order_index: 4,
+    description: 'Key-value mapping dictionaries, set operations, uniqueness, and hash map applications.',
+    estimated_minutes: 25,
+    difficulty: 'Medium',
+    content_json: JSON.stringify({
+      concept: 'Dictionaries store key-value pairs with O(1) average lookup time. Sets store unique, unordered elements.',
+      code_snippets: [
+        `# Dictionary Operations\nstudent = {"name": "Alex", "roll": 101, "marks": 95}\nprint(student.get("name"))\n\n# Set Uniqueness\nnums = [1, 2, 2, 3, 4, 4, 5]\nunique_nums = set(nums)\nprint(unique_nums) # {1, 2, 3, 4, 5}`
+      ],
+      key_rules: [
+        'Dictionary keys must be immutable types (strings, numbers, tuples).',
+        'set.add() inserts elements; set operations include union (|) and intersection (&).'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What is the average time complexity to look up a key in a Python dictionary?',
+          options: ['O(1)', 'O(N)', 'O(log N)', 'O(N^2)'],
+          correct: 0,
+          explanation: 'Python dictionaries are implemented using hash tables with O(1) average lookup.'
+        }
+      ]
+    })
+  },
+  {
+    id: 'python-functions-modules',
+    course_id: 'python-programming',
+    title: '5. Functions, Lambda & Modules',
+    category: 'Functions & Modules',
+    order_index: 5,
+    description: 'Def, return values, default parameters, *args, **kwargs, lambda expressions, and import.',
+    estimated_minutes: 30,
+    difficulty: 'Medium',
+    content_json: JSON.stringify({
+      concept: 'Functions organize reusable blocks of code. Lambda expressions provide anonymous single-expression functions.',
+      code_snippets: [
+        `# Function with *args and **kwargs\ndef calculate_total(*args, discount=0):\n    subtotal = sum(args)\n    return subtotal * (1 - discount)\n\nprint(calculate_total(100, 200, 300, discount=0.10)) # Output: 540.0`
+      ],
+      key_rules: [
+        '*args collects extra positional arguments into a tuple.',
+        '**kwargs collects keyword arguments into a dictionary.',
+        'Lambda syntax: lambda x, y: x + y'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What is the result of (lambda x: x * 2)(5)?',
+          options: ['10', '25', '52', 'Error'],
+          correct: 0,
+          explanation: 'Lambda evaluates 5 * 2 = 10.'
+        }
+      ]
+    })
+  },
+  {
+    id: 'python-oop',
+    course_id: 'python-programming',
+    title: '6. Object-Oriented Programming (OOP)',
+    category: 'Object Oriented Python',
+    order_index: 6,
+    description: 'Classes, __init__ constructor, self parameter, inheritance, encapsulation, and polymorphism.',
+    estimated_minutes: 35,
+    difficulty: 'Medium',
+    content_json: JSON.stringify({
+      concept: 'OOP bundles data attributes and method behaviors into reusable class objects.',
+      code_snippets: [
+        `class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n    def greet(self):\n        return f"Hello, my name is {self.name}"\n\np1 = Person("Alice", 22)\nprint(p1.greet())`
+      ],
+      key_rules: [
+        '__init__() is automatically invoked when creating a class instance.',
+        'self represents the instance of the object itself.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What is the purpose of __init__ in Python classes?',
+          options: ['Constructor method to initialize object attributes', 'Destructor method', 'Static method initializer', 'Private module declaration'],
+          correct: 0,
+          explanation: '__init__ acts as the constructor method in Python.'
+        }
+      ]
+    })
+  },
+  {
+    id: 'python-exception-files',
+    course_id: 'python-programming',
+    title: '7. Exception Handling & File I/O',
+    category: 'Advanced Python',
+    order_index: 7,
+    description: 'Try-except-finally blocks, custom exceptions, reading/writing files using with open().',
+    estimated_minutes: 30,
+    difficulty: 'Medium',
+    content_json: JSON.stringify({
+      concept: 'Exception handling prevents program crashes on runtime errors. File I/O allows reading and writing persistent files.',
+      code_snippets: [
+        `# Safe File Writing using "with" context manager\nwith open("data.txt", "w") as f:\n    f.write("PrepNex Placement Data\n")\n\n# Exception Handling\ntry:\n    num = int("abc")\nexcept ValueError as e:\n    print("Caught invalid number format:", e)`
+      ],
+      key_rules: [
+        'The with statement ensures files are closed automatically after block execution.',
+        'try block contains risky code; except catches runtime errors.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'Why is using "with open(...) as f" preferred for file operations in Python?',
+          options: ['It automatically closes the file even if exceptions occur', 'It encrypts file content', 'It makes file reading 10x faster', 'It enables multi-threading'],
+          correct: 0,
+          explanation: 'Context manager automatically calls f.close() upon exit.'
+        }
+      ]
+    })
+  },
+
+  // --- JAVA TOPICS ---
+  {
+    id: 'java-syntax-variables',
+    course_id: 'java-programming',
+    title: '1. Java Syntax & Primitive Types',
+    category: 'Java Basics',
+    order_index: 1,
+    description: 'Java JDK setup, main method, strongly-typed variables, primitive types, and operators.',
+    estimated_minutes: 20,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'Java is a statically-typed, object-oriented, compiled language executed on the Java Virtual Machine (JVM).',
+      code_snippets: [
+        `public class Hello {\n    public static void main(String[] args) {\n        int score = 95;\n        double price = 19.99;\n        boolean isPass = true;\n        System.out.println("Score: " + score + ", Status: " + isPass);\n    }\n}`
+      ],
+      key_rules: [
+        'Every Java application must have a main class and public static void main method.',
+        'Java requires explicit data type declaration (int, double, char, boolean).'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What is the default size of an int data type in Java?',
+          options: ['32 bits (4 bytes)', '16 bits (2 bytes)', '64 bits (8 bytes)', '8 bits (1 byte)'],
+          correct: 0,
+          explanation: 'Java int is a signed 32-bit integer.'
+        }
+      ]
+    })
+  },
+  {
+    id: 'java-control-loops',
+    course_id: 'java-programming',
+    title: '2. Control Flow, Loops & Arrays',
+    category: 'Java Fundamentals',
+    order_index: 2,
+    description: 'If-else statements, switch-case, for, while, enhanced for-each loop, and 1D/2D arrays.',
+    estimated_minutes: 25,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'Arrays store fixed-size sequential elements of same type. Control flow manages conditional execution.',
+      code_snippets: [
+        `int[] numbers = {10, 20, 30, 40};\nfor (int num : numbers) {\n    System.out.println("Element: " + num);\n}`
+      ],
+      key_rules: [
+        'Arrays have fixed length (numbers.length).',
+        'Enhanced for-each loop simplifies sequential array iteration.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What happens if you access index arr[5] on an array of length 5 in Java?',
+          options: ['ArrayIndexOutOfBoundsException', 'Returns 0', 'Returns null', 'Compiler error'],
+          correct: 0,
+          explanation: 'Indices are 0 to 4. Index 5 throws ArrayIndexOutOfBoundsException at runtime.'
+        }
+      ]
+    })
+  },
+  {
     id: 'java-oop-basics',
     course_id: 'java-programming',
-    title: 'Java Object-Oriented Programming (OOP)',
+    title: '3. Java Object-Oriented Programming (OOP)',
     category: 'Core Java',
-    order_index: 1,
+    order_index: 3,
     description: 'Classes, Objects, Constructors, Encapsulation, and access modifiers.',
     estimated_minutes: 30,
     difficulty: 'Medium',
     content_json: JSON.stringify({
       concept: 'Java is an object-oriented language where software is organized around classes and objects representing real-world entities.',
       code_snippets: [
-        `public class Student {
-    private String name;
-    private int score;
-
-    public Student(String name, int score) {
-        this.name = name;
-        this.score = score;
-    }
-
-    public String getName() { return name; }
-    public int getScore() { return score; }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Student s1 = new Student("Alex", 92);
-        System.out.println(s1.getName() + ": " + s1.getScore());
-    }
-}`
+        `public class Student {\n    private String name;\n    private int score;\n\n    public Student(String name, int score) {\n        this.name = name;\n        this.score = score;\n    }\n\n    public String getName() { return name; }\n    public int getScore() { return score; }\n}`
       ],
       key_rules: [
         'Encapsulation hides state by making fields private and exposing getters/setters.',
-        'The constructor initializes new object instances.',
-        'Access modifiers: private (class only), default (package), protected (subclass), public (global).'
+        'The constructor initializes new object instances.'
       ],
       quiz: [
         {
@@ -537,34 +507,50 @@ public class Main {
       ]
     })
   },
+
+  // --- C PROGRAMMING TOPICS ---
+  {
+    id: 'c-syntax-variables',
+    course_id: 'c-programming',
+    title: '1. C Fundamentals & Data Types',
+    category: 'C Basics',
+    order_index: 1,
+    description: 'C compilation model, main(), printf, scanf, data types (int, float, char, double).',
+    estimated_minutes: 20,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'C is a general-purpose procedural programming language that provides low-level memory access and efficient compilation.',
+      code_snippets: [
+        `#include <stdio.h>\n\nint main() {\n    int age = 21;\n    float gpa = 3.8;\n    printf("Age: %d, GPA: %.2f\n", age, gpa);\n    return 0;\n}`
+      ],
+      key_rules: [
+        '#include <stdio.h> provides standard I/O functions printf and scanf.',
+        'Format specifiers: %d for int, %f for float, %c for char, %s for string.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'Which format specifier is used to read an integer with scanf in C?',
+          options: ['%d', '%f', '%s', '%c'],
+          correct: 0,
+          explanation: '%d formats decimal signed integers.'
+        }
+      ]
+    })
+  },
   {
     id: 'c-pointers',
     course_id: 'c-programming',
-    title: 'C Pointers & Memory Management',
+    title: '2. C Pointers & Memory Management',
     category: 'Core C',
-    order_index: 1,
+    order_index: 2,
     description: 'Memory addresses, pointer arithmetic, dereferencing, malloc, and free.',
     estimated_minutes: 35,
     difficulty: 'Hard',
     content_json: JSON.stringify({
       concept: 'Pointers store the memory address of another variable. They enable efficient dynamic memory allocation and array manipulation in C.',
       code_snippets: [
-        `#include <stdio.h>
-#include <stdlib.h>
-
-int main() {
-    int val = 42;
-    int *ptr = &val;
-    printf("Value: %d, Address: %p\\n", *ptr, (void*)ptr);
-
-    // Dynamic memory allocation
-    int *arr = (int*) malloc(5 * sizeof(int));
-    if (arr != NULL) {
-        arr[0] = 10;
-        free(arr); // Always free allocated memory!
-    }
-    return 0;
-}`
+        `#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int val = 42;\n    int *ptr = &val;\n    printf("Value: %d, Address: %p\n", *ptr, (void*)ptr);\n\n    int *arr = (int*) malloc(5 * sizeof(int));\n    if (arr != NULL) {\n        arr[0] = 10;\n        free(arr);\n    }\n    return 0;\n}`
       ],
       key_rules: [
         '& operator gets the memory address of a variable.',
@@ -575,14 +561,40 @@ int main() {
         {
           id: 'q1',
           question: 'What happens if you do not call free() on memory allocated with malloc() before program terminates?',
-          options: [
-            'It results in a memory leak',
-            'C automatically frees it immediately',
-            'A runtime segmentation fault occurs',
-            'The compiler rejects compilation'
-          ],
+          options: ['It results in a memory leak', 'C automatically frees it immediately', 'A runtime segmentation fault occurs', 'The compiler rejects compilation'],
           correct: 0,
           explanation: 'Allocated heap memory stays reserved until explicitly freed or operating system cleans process.'
+        }
+      ]
+    })
+  },
+
+  // --- HTML & CSS TOPICS ---
+  {
+    id: 'html-syntax-tags',
+    course_id: 'html-css-web',
+    title: '1. HTML5 Fundamentals & Semantic Tags',
+    category: 'HTML Core',
+    order_index: 1,
+    description: 'HTML document structure, headings, paragraphs, lists, links, images, and semantic tags (header, nav, section, footer).',
+    estimated_minutes: 20,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'HTML (HyperText Markup Language) defines the content structure of web pages using markup tags.',
+      code_snippets: [
+        `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <title>PrepNex Web</title>\n</head>\n<body>\n  <header>\n    <h1>Welcome to PrepNex</h1>\n  </header>\n  <main>\n    <p>Placement preparation portal.</p>\n  </main>\n</body>\n</html>`
+      ],
+      key_rules: [
+        '<!DOCTYPE html> specifies HTML5 document type.',
+        'Semantic tags (<header>, <nav>, <article>, <section>, <footer>) improve accessibility and SEO.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'Which HTML5 semantic tag should contain main navigation links?',
+          options: ['<nav>', '<header>', '<menu>', '<links>'],
+          correct: 0,
+          explanation: '<nav> represents a section of a page that links to other pages or to parts within the page.'
         }
       ]
     })
@@ -590,34 +602,21 @@ int main() {
   {
     id: 'html-css-flexbox',
     course_id: 'html-css-web',
-    title: 'CSS Flexbox Layout Masterclass',
+    title: '2. CSS Flexbox Layout Masterclass',
     category: 'CSS Layouts',
-    order_index: 1,
+    order_index: 2,
     description: 'Flex container, flex items, main axis, cross axis, justify-content, and align-items.',
     estimated_minutes: 25,
     difficulty: 'Easy',
     content_json: JSON.stringify({
       concept: 'Flexbox (Flexible Box Layout) provides an efficient way to layout, align and distribute space among items in a container.',
       code_snippets: [
-        `.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #0f172a;
-}
-
-.nav-links {
-  display: flex;
-  gap: 1.5rem;
-  list-style: none;
-}`
+        `.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 1rem 2rem;\n  background-color: #0f172a;\n}\n\n.nav-links {\n  display: flex;\n  gap: 1.5rem;\n  list-style: none;\n}`
       ],
       key_rules: [
         'display: flex creates a flex container.',
-        'justify-content aligns items along the main axis (row or column).',
-        'align-items aligns items along the cross axis.',
-        'flex-direction: row (default) or column defines main axis orientation.'
+        'justify-content aligns items along the main axis.',
+        'align-items aligns items along the cross axis.'
       ],
       quiz: [
         {
@@ -626,6 +625,105 @@ int main() {
           options: ['justify-content', 'align-items', 'align-content', 'flex-wrap'],
           correct: 0,
           explanation: 'When flex-direction is row, the main axis is horizontal, so justify-content controls horizontal alignment.'
+        }
+      ]
+    })
+  },
+
+  // --- JAVASCRIPT TOPICS ---
+  {
+    id: 'js-basics-variables',
+    course_id: 'javascript-programming',
+    title: '1. JavaScript Variables & ES6+ Syntax',
+    category: 'JS Basics',
+    order_index: 1,
+    description: 'var vs let vs const, scope, template literals, destructuring, and arrow functions.',
+    estimated_minutes: 20,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'JavaScript is a lightweight, compiled/interpreted scripting language for modern web development.',
+      code_snippets: [
+        `const name = "PrepNex";\nlet score = 95;\n\n// Template literal & Arrow Function\nconst greet = (user) => \`Hello \${user}, your score is \${score}\`;\nconsole.log(greet(name));`
+      ],
+      key_rules: [
+        'const creates immutable variable bindings.',
+        'let creates block-scoped mutable variables.',
+        'Template literals use backticks \`...\${var}...\`'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What is the main difference between let and const in JavaScript?',
+          options: [
+            'const bindings cannot be reassigned; let bindings can be reassigned',
+            'let is function scoped; const is global',
+            'const can only store numbers',
+            'There is no difference'
+          ],
+          correct: 0,
+          explanation: 'const prevents re-assignment of the variable identifier.'
+        }
+      ]
+    })
+  },
+  {
+    id: 'js-async-promises',
+    course_id: 'javascript-programming',
+    title: '2. Asynchronous JS: Promises & Async/Await',
+    category: 'Advanced JS',
+    order_index: 2,
+    description: 'Event loop, callback queue, Promises, async/await syntax, and fetch API requests.',
+    estimated_minutes: 25,
+    difficulty: 'Medium',
+    content_json: JSON.stringify({
+      concept: 'Asynchronous JavaScript executes non-blocking operations like HTTP requests without freezing the main thread.',
+      code_snippets: [
+        `async function fetchUserData(userId) {\n  try {\n    const res = await fetch(\`/api/user/\${userId}\`);\n    const data = await res.json();\n    return data;\n  } catch (err) {\n    console.error("Fetch error:", err);\n  }\n}`
+      ],
+      key_rules: [
+        'async functions always return a Promise.',
+        'await pauses execution until Promise resolves or rejects.',
+        'Wrap await calls inside try...catch for error handling.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'What does an async function in JavaScript return by default?',
+          options: ['A Promise', 'An Object', 'Undefined', 'A Callback'],
+          correct: 0,
+          explanation: 'Functions declared with async keyword implicitly return a Promise.'
+        }
+      ]
+    })
+  },
+
+  // --- SQL TOPICS ---
+  {
+    id: 'sql-basics-queries',
+    course_id: 'sql-database',
+    title: '1. SQL SELECT Queries & Data Filtering',
+    category: 'SQL Basics',
+    order_index: 1,
+    description: 'SELECT, FROM, WHERE, ORDER BY, GROUP BY, HAVING, and aggregate functions (COUNT, SUM, AVG).',
+    estimated_minutes: 20,
+    difficulty: 'Easy',
+    content_json: JSON.stringify({
+      concept: 'SQL (Structured Query Language) is used to query and manipulate data in relational databases.',
+      code_snippets: [
+        `SELECT department, COUNT(*) as total_employees, AVG(salary) as avg_salary\nFROM employees\nWHERE status = 'Active'\nGROUP BY department\nHAVING AVG(salary) > 50000\nORDER BY avg_salary DESC;`
+      ],
+      key_rules: [
+        'WHERE filters individual rows before grouping.',
+        'GROUP BY groups rows sharing common attribute values.',
+        'HAVING filters grouped aggregates after GROUP BY.'
+      ],
+      quiz: [
+        {
+          id: 'q1',
+          question: 'Which SQL clause is used to filter aggregated group results?',
+          options: ['HAVING', 'WHERE', 'ORDER BY', 'GROUP BY'],
+          correct: 0,
+          explanation: 'HAVING filters aggregated groups (e.g. HAVING COUNT(*) > 5).'
         }
       ]
     })
@@ -647,7 +745,7 @@ async function seed() {
 
   for (const c of coursesData) {
     await db.run(
-      `INSERT OR IGNORE INTO courses (id, title, slug, category, description, icon, total_topics, level)
+      `INSERT OR REPLACE INTO courses (id, title, slug, category, description, icon, total_topics, level)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [c.id, c.title, c.slug, c.category, c.description, c.icon, c.total_topics, c.level]
     );
@@ -655,7 +753,7 @@ async function seed() {
 
   for (const t of topicsData) {
     await db.run(
-      `INSERT OR IGNORE INTO course_topics (id, course_id, title, category, order_index, description, content_json, estimated_minutes, leetcode_url, difficulty)
+      `INSERT OR REPLACE INTO course_topics (id, course_id, title, category, order_index, description, content_json, estimated_minutes, leetcode_url, difficulty)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [t.id, t.course_id, t.title, t.category, t.order_index, t.description, t.content_json, t.estimated_minutes, t.leetcode_url || null, t.difficulty || 'Medium']
     );
